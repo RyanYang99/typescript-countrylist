@@ -5,7 +5,7 @@ import CountryCard from "./CountryCard";
 
 const CountryList: React.FC = () => {
   const [countries, setCountries] = React.useState<Country[]>([]);
-  const [selectedCountries, setSelectedcountries] = React.useState<Country[]>(
+  const [selectedCountries, setSelectedCountries] = React.useState<Country[]>(
     []
   );
 
@@ -21,23 +21,26 @@ const CountryList: React.FC = () => {
     fetchCountries();
   }, []);
 
-  //선택된 나라만 뜨게하는 로직
+  //선택된 나라만 뜨게하는 로직 (선택된 나라는 All에 표시되지 않게 수정)
 
   const handleSelectCountry = (country: Country): void => {
     if (
       !selectedCountries.find(
-        (selectedCountry: Country) =>
-          selectedCountry.name.common === country.name.common
+        (selectedCountry) => selectedCountry.name.common === country.name.common
       )
     ) {
-      setSelectedcountries([...selectedCountries, country]);
+      setSelectedCountries([...selectedCountries, country]);
+      setCountries(
+        countries.filter((c) => c.name.common !== country.name.common)
+      );
     } else {
-      setSelectedcountries(
+      setSelectedCountries(
         selectedCountries.filter(
-          (selectedCountry: Country) =>
+          (selectedCountry) =>
             selectedCountry.name.common !== country.name.common
         )
       );
+      setCountries([...countries, country]);
     }
   };
 
@@ -47,27 +50,23 @@ const CountryList: React.FC = () => {
     <div>
       <h1>List of selected countries</h1>
       <div>
-        {selectedCountries.map((country: Country) => {
-          return (
-            <CountryCard
-              key={country.name.common}
-              country={country}
-              handleSelectCountry={handleSelectCountry}
-            />
-          );
-        })}
+        {selectedCountries.map((country: Country) => (
+          <CountryCard
+            key={country.name.common}
+            country={country}
+            handleSelectCountry={handleSelectCountry}
+          />
+        ))}
       </div>
       <h1>List of all countries</h1>
       <div className="w-50 h-100">
-        {countries.map((country: Country) => {
-          return (
-            <CountryCard
-              key={country.name.common}
-              country={country}
-              handleSelectCountry={handleSelectCountry}
-            />
-          );
-        })}
+        {countries.map((country: Country) => (
+          <CountryCard
+            key={country.name.common}
+            country={country}
+            handleSelectCountry={handleSelectCountry}
+          />
+        ))}
       </div>
     </div>
   );
